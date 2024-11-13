@@ -1,11 +1,12 @@
 <?php
+namespace YahnisElsts\PluginUpdateChecker\v5p5;
 
-if ( !class_exists('Puc_v4p11_OAuthSignature', false) ):
+if ( !class_exists(OAuthSignature::class, false) ):
 
 	/**
 	 * A basic signature generator for zero-legged OAuth 1.0.
 	 */
-	class Puc_v4p11_OAuthSignature {
+	class OAuthSignature {
 		private $consumerKey = '';
 		private $consumerSecret = '';
 
@@ -25,10 +26,10 @@ if ( !class_exists('Puc_v4p11_OAuthSignature', false) ):
 			$parameters = array();
 
 			//Parse query parameters.
-			$query = parse_url($url, PHP_URL_QUERY);
+			$query = wp_parse_url($url, PHP_URL_QUERY);
 			if ( !empty($query) ) {
 				parse_str($query, $parsedParams);
-				if ( is_array($parameters) ) {
+				if ( is_array($parsedParams) ) {
 					$parameters = $parsedParams;
 				}
 				//Remove the query string from the URL. We'll replace it later.
@@ -85,12 +86,13 @@ if ( !class_exists('Puc_v4p11_OAuthSignature', false) ):
 			if ( is_callable('random_bytes') ) {
 				try {
 					$rand = random_bytes(16);
-				} catch (Exception $ex) {
+				} catch (\Exception $ex) {
 					//Fall back to mt_rand (below).
 				}
 			}
 			if ( $rand === null ) {
-				$rand = mt_rand();
+				//phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
+				$rand = function_exists('wp_rand') ? wp_rand() : mt_rand();
 			}
 
 			return md5($mt . '_' . $rand);

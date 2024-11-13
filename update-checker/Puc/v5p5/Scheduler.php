@@ -1,11 +1,13 @@
 <?php
-if ( !class_exists('Puc_v4p11_Scheduler', false) ):
+namespace YahnisElsts\PluginUpdateChecker\v5p5;
+
+if ( !class_exists(Scheduler::class, false) ):
 
 	/**
 	 * The scheduler decides when and how often to check for updates.
-	 * It calls @see Puc_v4p11_UpdateChecker::checkForUpdates() to perform the actual checks.
+	 * It calls @see UpdateChecker::checkForUpdates() to perform the actual checks.
 	 */
-	class Puc_v4p11_Scheduler {
+	class Scheduler {
 		public $checkPeriod = 12; //How often to check for updates (in hours).
 		public $throttleRedundantChecks = false; //Check less often if we already know that an update is available.
 		public $throttledCheckPeriod = 72;
@@ -13,7 +15,7 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 		protected $hourlyCheckHooks = array('load-update.php');
 
 		/**
-		 * @var Puc_v4p11_UpdateChecker
+		 * @var UpdateChecker
 		 */
 		protected $updateChecker;
 
@@ -22,7 +24,7 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 		/**
 		 * Scheduler constructor.
 		 *
-		 * @param Puc_v4p11_UpdateChecker $updateChecker
+		 * @param UpdateChecker $updateChecker
 		 * @param int $checkPeriod How often to check for updates (in hours).
 		 * @param array $hourlyHooks
 		 */
@@ -47,13 +49,22 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 				} else {
 					//Use a custom cron schedule.
 					$scheduleName = 'every' . $this->checkPeriod . 'hours';
+					//phpcs:ignore WordPress.WP.CronInterval.ChangeDetected -- WPCS fails to parse the callback.
 					add_filter('cron_schedules', array($this, '_addCustomSchedule'));
 				}
 
 				if ( !wp_next_scheduled($this->cronHook) && !defined('WP_INSTALLING') ) {
 					//Randomly offset the schedule to help prevent update server traffic spikes. Without this
 					//most checks may happen during times of day when people are most likely to install new plugins.
-					$firstCheckTime = time() - rand(0, max($this->checkPeriod * 3600 - 15 * 60, 1));
+					$upperLimit = max($this->checkPeriod * 3600 - 15 * 60, 1);
+					if ( function_exists('wp_rand') ) {
+						$randomOffset = wp_rand(0, $upperLimit);
+					} else {
+						//This constructor may be called before wp_rand() is available.
+						//phpcs:ignore WordPress.WP.AlternativeFunctions.rand_rand
+						$randomOffset = rand(0, $upperLimit);
+					}
+					$firstCheckTime = time() - $randomOffset;
 					$firstCheckTime = apply_filters(
 						$this->updateChecker->getUniqueName('first_check_time'),
 						$firstCheckTime
@@ -69,12 +80,14 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 				//Like WordPress itself, we check more often on certain pages.
 				/** @see wp_update_plugins */
 				add_action('load-update-core.php', array($this, 'maybeCheckForUpdates'));
+				//phpcs:ignore Squiz.PHP.CommentedOutCode.Found -- Not actually code, just file names.
 				//"load-update.php" and "load-plugins.php" or "load-themes.php".
 				$this->hourlyCheckHooks = array_merge($this->hourlyCheckHooks, $hourlyHooks);
 				foreach($this->hourlyCheckHooks as $hook) {
 					add_action($hook, array($this, 'maybeCheckForUpdates'));
 				}
 				//This hook fires after a bulk update is complete.
+				add_action('upgrader_process_complete', array($this, 'removeHooksIfLibraryGone'), 1, 0);
 				add_action('upgrader_process_complete', array($this, 'upgraderProcessComplete'), 11, 2);
 
 			} else {
@@ -84,18 +97,11 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 		}
 
 		/**
-		 * Runs upon the WP action upgrader_process_complete.
+		 * Remove all hooks if this version of PUC has been deleted or overwritten.
 		 *
-		 * We look at the parameters to decide whether to call maybeCheckForUpdates() or not.
-		 * We also check if the update checker has been removed by the update.
-		 *
-		 * @param WP_Upgrader $upgrader  WP_Upgrader instance
-		 * @param array $upgradeInfo extra information about the upgrade
+		 * Callback for the "upgrader_process_complete" action.
 		 */
-		public function upgraderProcessComplete(
-			/** @noinspection PhpUnusedParameterInspection */
-			$upgrader, $upgradeInfo
-		) {
+		public function removeHooksIfLibraryGone() {
 			//Cancel all further actions if the current version of PUC has been deleted or overwritten
 			//by a different version during the upgrade. If we try to do anything more in that situation,
 			//we could trigger a fatal error by trying to autoload a deleted class.
@@ -103,9 +109,22 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 			if ( !file_exists(__FILE__) ) {
 				$this->removeHooks();
 				$this->updateChecker->removeHooks();
-				return;
 			}
+		}
 
+		/**
+		 * Runs upon the WP action upgrader_process_complete.
+		 *
+		 * We look at the parameters to decide whether to call maybeCheckForUpdates() or not.
+		 * We also check if the update checker has been removed by the update.
+		 *
+		 * @param \WP_Upgrader $upgrader  WP_Upgrader instance
+		 * @param array $upgradeInfo extra information about the upgrade
+		 */
+		public function upgraderProcessComplete(
+			/** @noinspection PhpUnusedParameterInspection */
+			$upgrader, $upgradeInfo
+		) {
 			//Sanity check and limitation to relevant types.
 			if (
 				!is_array($upgradeInfo) || !isset($upgradeInfo['type'], $upgradeInfo['action'])
@@ -116,7 +135,7 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 
 			//Filter out notifications of upgrades that should have no bearing upon whether or not our
 			//current info is up-to-date.
-			if ( is_a($this->updateChecker, 'Puc_v4p11_Theme_UpdateChecker') ) {
+			if ( is_a($this->updateChecker, Theme\UpdateChecker::class) ) {
 				if ( 'theme' !== $upgradeInfo['type'] || !isset($upgradeInfo['themes']) ) {
 					return;
 				}
@@ -130,7 +149,7 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 				}
 			}
 
-			if ( is_a($this->updateChecker, 'Puc_v4p11_Plugin_UpdateChecker') ) {
+			if ( is_a($this->updateChecker, Plugin\UpdateChecker::class) ) {
 				if ( 'plugin' !== $upgradeInfo['type'] || !isset($upgradeInfo['plugins']) ) {
 					return;
 				}
@@ -168,6 +187,21 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 			$state = $this->updateChecker->getUpdateState();
 			$shouldCheck = ($state->timeSinceLastCheck() >= $this->getEffectiveCheckPeriod());
 
+			if ( $shouldCheck ) {
+				//Sanity check: Do not proceed if one of the critical classes is missing.
+				//That can happen - theoretically and extremely rarely - if maybeCheckForUpdates()
+				//is called before the old version of our plugin has been fully deleted, or
+				//called from an independent AJAX request during deletion.
+				if ( !(
+					class_exists(Utils::class)
+					&& class_exists(Metadata::class)
+					&& class_exists(Plugin\Update::class)
+					&& class_exists(Theme\Update::class)
+				) ) {
+					return;
+				}
+			}
+
 			//Let plugin authors substitute their own algorithm.
 			$shouldCheck = apply_filters(
 				$this->updateChecker->getUniqueName('check_now'),
@@ -198,7 +232,7 @@ if ( !class_exists('Puc_v4p11_Scheduler', false) ):
 				//Check less frequently if it's already known that an update is available.
 				$period = $this->throttledCheckPeriod * 3600;
 			} else if ( defined('DOING_CRON') && constant('DOING_CRON') ) {
-				//WordPress cron schedules are not exact, so lets do an update check even
+				//WordPress cron schedules are not exact, so let's do an update check even
 				//if slightly less than $checkPeriod hours have elapsed since the last check.
 				$cronFuzziness = 20 * 60;
 				$period = $this->checkPeriod * 3600 - $cronFuzziness;
