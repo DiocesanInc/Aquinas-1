@@ -1,0 +1,109 @@
+.news-container {
+    --slide-height: 450px !important;
+
+    margin-top: calc(var(--homepage-section-spacing) + 40px);
+    z-index: 8;
+    position: relative;
+    margin-bottom: 60px;
+    
+    .crosses {
+        position: absolute;
+        top: calc(-1 * (var(--homepage-section-spacing) + 160px));
+        z-index: 0;
+        left: -10%;
+    }
+
+    .slick-list {
+        margin-inline: -8px;
+    }
+    .slick-arrow {
+        bottom: -50px;
+        top: auto;
+        z-index: 1;
+        left: 50%;
+
+        &.slick-prev { 
+            transform: translate(-100%);
+        }
+
+        &.slick-next { 
+            margin-left: 3px;
+            transform: translateX(0px);
+        }
+    }
+    .post-wrapper {
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        margin-inline: 8px;
+        background-color: var(--clr-tertiary);
+        margin-bottom: 0 !important;
+        &.slick-slide {
+            height: 250px !important;
+        }
+        .post-content-image {
+            object-fit: cover;
+            width: 100%; 
+            aspect-ratio: 370 / 305;
+        }
+        .post-content-wrapper {
+            padding: 25px;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            > * {
+                position: relative;
+            }
+        }
+
+        .post-heading {
+            margin-block: 0 60px;
+            position: relative;
+        }
+
+        .post-excerpt {
+            font-size: clamp(16px, 1.5vw, 23px);
+            margin-bottom: 30px;
+        }
+
+        .post-read-more {
+            text-decoration: underline;
+            display: inline-block;
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+    &.slick-slider.equal-height .slick-track .slick-slide.post-wrapper {
+        // height: var(--slide-height) !important;
+    }
+
+    @media screen and (min-width: $tablet) {
+        // --slide-height: 400px !important;
+        .post-wrapper {
+            .post-content-image {
+                // height: 200px;
+            }
+            .post-content-wrapper {
+                .post-heading {
+                    margin-block: 0 10px;
+                    position: relative;
+                }
+                
+            }
+        }
+    }
+
+    @media screen and (min-width: $laptop) {
+        // --slide-height: auto !important;
+
+        margin-top: var(--homepage-section-spacing);
+
+        .post-wrapper {
+
+        }
+    }
+}

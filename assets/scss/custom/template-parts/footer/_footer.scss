@@ -1,0 +1,101 @@
+footer {
+    --footer-padding-block: 25px 25px;
+    --margin-top-address: 20px;
+    --margin-top-contact: 20px;
+    --margin-top-social-media: 20px;
+
+    padding-block: var(--footer-padding-block);
+    clear: both;
+    z-index: 10;
+    position: relative;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+    }
+
+    .footer-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        &.limit-width {
+            max-width: 80%;
+        }
+        .hidden-laptop {
+            width: 100%;
+            text-align: center;
+        }
+        img {
+            max-width: 250px;
+            max-height: 220px;
+            object-fit: cover;
+        }
+        h4 {
+            text-transform: uppercase;
+        }
+        .footer-address {
+            margin-top: var(--margin-top-address);
+            position: relative;
+            .address {
+                gap: 10px;
+                display: inline;
+                .phone,
+                .fax,
+                .email {
+                }
+            }
+        }
+        .footer-contact {
+            display: flex;
+            flex-direction: column;
+            margin-top: var(--margin-top-contact);
+            gap: 20px;
+            margin-right: auto;
+        }
+        .footer-social-media {
+            margin-top: var(--margin-top-social-media);
+            text-align: center;
+            .social-media-link-list {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                .social-media-link {
+                    display: inline-block;
+                    font-size: 2.5rem;
+                    transition: var(--tr-transform);
+                    &:hover {
+                        transform: scale(1.1);
+                    }
+                }
+            }
+        }
+
+        @media screen and (min-width: $laptop) {
+            --footer-padding-block: 50px 25px;
+            --margin-top-address: 0;
+            --margin-top-contact: 0;
+            --margin-top-social-media: 0;
+            flex-direction: row;
+            justify-content: space-between;
+            &.limit-width {
+                max-width: 90%;
+            }
+            .footer-contact {
+                margin-right: 0;
+            }
+        }
+
+        @media screen and (min-width: $desktop) {
+
+            .footer-contact {
+                margin-bottom: 35px;
+            }
+        }
+    }
+}

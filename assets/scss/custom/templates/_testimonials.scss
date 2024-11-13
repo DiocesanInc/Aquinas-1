@@ -1,0 +1,94 @@
+.page-template-testimonials {
+    position: relative;
+    padding: 120px 0 70px;
+    .testimonials-image {
+        width: 95%;
+        margin: auto;
+        display: block;
+    }
+    .testimonials-container {
+        position: relative;
+        background: var(--clr-tertiary);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        padding: 35px 35px 50px;
+        width: 95%;
+        margin: auto;
+
+        .testimonial-heading {
+            margin: 0 0 10px;
+        }
+        .slick-slider {
+            .slick-arrow {
+                bottom: -15%;
+                top: unset;
+                &.slick-prev {
+                    left: 0;
+                }
+                &.slick-next {
+                    left: 40px;
+                }
+            }
+        
+            .testimonial-wrapper {
+                position: relative;
+                &.slick-current {
+                    --opacity: 1;
+                }
+
+                // .testimonial-header-wrapper {
+                //     display: flex;
+                //     flex-direction: column;
+                //     gap: 15px;
+                //     margin-bottom: 10px;
+                //     align-items: flex-start;
+
+                //     @media screen and (min-width: $laptop) {
+                //         flex-direction: row;
+                //         align-items: center;
+                //     }
+                // }
+
+                .testimonial-content {
+                    font-size: clamp(16px, 2.5vw, 20px);
+                    margin-bottom: 25px;
+                }
+            }
+        }
+    }
+    @media screen and (min-width: $tablet) {
+        .testimonials-container, .testimonials-image {
+            width: 90%;
+        }
+    }
+    @media screen and (min-width: $laptop) {
+        .testimonials-image {
+            width: 80%;
+            max-height: 650px;
+            object-fit: cover;
+            margin-right: 5%;
+        }
+        .testimonials-container {
+            padding: 50px;
+            position: absolute;
+            width: 70%;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 5%;
+            .slick-slider {
+            }
+        }
+    }
+
+    @media screen and (min-width: $desktop) {
+        .testimonials-image {
+        }
+        .testimonials-container {
+            width: 50%;
+        }
+        .stats.banner-content-wrapper {
+            .banner-items {
+                padding-bottom: 0;
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+.site-branding {
+    @media screen and (min-width: $laptop){
+        margin-left: -2%;
+    }
+    .header-logo-link {
+        display: block;
+        .header-logo {
+            height: calc(var(--max-logo-height, calc(var(--header-height) - 1rem)) - 1rem);
+            max-width: none;
+            @media screen and (min-width: $laptop){
+                height: var(--max-logo-height, calc(var(--header-height) - 2rem));
+            }
+        }
+    }
+}

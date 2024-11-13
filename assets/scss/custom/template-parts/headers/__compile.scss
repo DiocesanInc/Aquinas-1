@@ -1,0 +1,38 @@
+.site-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--header-height);
+    z-index: 20;
+    padding-top: 1rem;
+    transition: background 0.3s ease, padding 0.3s ease;
+
+    .header-logo-sticky {
+        display: none;
+    }
+
+    &.sticky {
+        box-shadow: 0 3px 6px #00000029;
+        padding-top: 1rem;
+        .header-logo-default {
+            display: none;
+        }
+        .header-logo-sticky {
+            display: block;
+        }
+    }
+
+    @import "bar";
+    @import "navigation";
+
+    @media screen and (min-width: $laptop){
+        --header-height: calc(var(--max-logo-height) + 30px);
+    }
+}
+main {
+    @import "page-header";
+}
+
+.admin-bar .site-header {
+    margin-top: 2rem;
+}

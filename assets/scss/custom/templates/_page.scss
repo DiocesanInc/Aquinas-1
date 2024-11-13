@@ -1,0 +1,14 @@
+.site-main {
+    margin-bottom: 0;
+    &.archive {
+        svg {
+            position: absolute;
+            right: 0;
+            top: var(--hero-height);
+            z-index: -1;
+        }
+    }
+}
+.entry-content {
+    margin-top: 2rem;
+}

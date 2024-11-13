@@ -1,0 +1,120 @@
+.mission-container {
+    margin-top: var(--homepage-section-spacing);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    z-index: 10;
+}
+
+.mission-content-wrapper {
+    --pos-left: 0%;
+    --pos-translateX: 0;
+    // --pos-translateY: -20%;
+    margin-top: -11%;
+
+    transform: translate(var(--pos-translateX), 0%);
+    left: var(--pos-left);
+    padding: 30px;
+    position: relative;
+    display: inline-block;
+    max-width: 95%;
+    margin-inline: auto;
+    z-index: 10;
+    // &.left {
+    //     --pos-left: 5%;
+    //     --pos-translate: 0;
+    // }
+    // &.center {
+    //     --pos-left: 50%;
+    //     --pos-translate: -50%;
+    // }
+    // &::before {
+    //     content: "";
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0;
+    //     background-color: var(--clr-primary);
+    //     height: 100%;
+    //     width: 100%;
+    // }
+    .mission-heading {
+        position: relative;
+        // font-size: clamp(25px, 2.5vw, 40px);
+        margin-block: 0 50px;
+    }
+    .mission-content {
+        // font-size: clamp(16px, 2vw, 20px);
+        position: relative;
+        p {
+            font-size: inherit;
+            color: inherit;
+            line-height: 1.2;
+            margin: 0;
+        }
+    }
+    &.hidden-desktop {
+        box-shadow: 0 3px 6px #00000029;
+        z-index: 10;
+        background: #fff;
+    }
+}
+
+@media screen and (min-width: $tablet) {
+    .mission-container {
+        height: 50vh;
+    }
+
+    .mission-image {
+        height: 100%;
+    }
+    
+    .mission-content-wrapper {
+        --pos-left: 93%;
+        --pos-translateX: -100%;
+
+        padding: 40px;
+        max-width: 90%;
+        margin-top: -8%;
+    }
+}
+@media screen and (min-width: $laptop) {
+    .mission-content-wrapper {
+        --pos-left: 85%;
+        // --pos-translateY: -30%;
+
+        max-width: 75%;
+        margin-top: -10%;
+    }
+}
+
+@media screen and (min-width: $desktop) {
+    .mission-container {
+        --spacing-top: 180px;
+
+        display: flex;
+        justify-content: space-between;
+        padding-block: 50px;
+        height: auto;
+        min-height: 50vh;
+        margin-bottom: 0;
+        .mission-image {
+            height: auto;
+            width: 48%;
+            object-fit: cover;
+        }
+    }
+    .mission-content-wrapper {
+        width: 48%;
+        transform: unset;
+        left: unset;
+        padding: 0px 35px;
+        margin-bottom: 0;
+        top: auto;
+        max-width: none;
+        margin: auto 0;
+        &::before {
+            opacity: 0.8;
+        }
+    }
+}

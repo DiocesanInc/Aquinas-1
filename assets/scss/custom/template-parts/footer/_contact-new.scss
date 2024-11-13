@@ -1,0 +1,104 @@
+.contact-container {
+    margin-top: calc(var(--homepage-section-spacing) + 40px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    z-index: 10;
+    
+    div[class*="-contact-container"] {
+        display: flex;
+        flex-direction: column;
+        padding: 35px 50px;
+        text-align: center;
+    }
+    .left-contact-container {
+        position: relative;
+        .left-header {
+            text-align: center;
+        }
+        .contact-buttons {
+            justify-content: center;
+            flex-direction: column;
+            a {
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        .crosses {
+            display: none;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            line {
+                stroke: #fff;
+            }
+        }
+    }
+    .right-contact-container {
+        .contact-buttons {
+            i {
+                font-size: 35px;
+            }
+            a + a {
+                margin-left: 15px;
+            }
+        }
+    }
+    .contact-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        i {
+            color: var(--clr-primary);
+        }
+    }
+
+    @media screen and (min-width: $tablet) {
+        .left-contact-container {
+            .left-header {
+                text-align: left;
+            }
+            .contact-buttons {
+                justify-content: flex-start;
+                flex-direction: row;
+                a {
+                    margin: 0;
+                }
+                a + a {
+                    margin-left: 15px;
+                }
+            }
+        }
+        div[class*="-contact-container"] {
+            text-align: left;
+            padding: 35px 70px;
+        }
+        .contact-buttons {
+            justify-content: flex-start;
+        }
+    }
+    @media screen and (min-width: $laptop) {
+        flex-direction: row;
+        div[class*="-contact-container"].left-contact-container {
+            padding: 70px 100px;
+            width: 55%;
+        }
+        div[class*="-contact-container"].right-contact-container {
+            padding: 40px 100px;
+            width: 45%;
+            margin-top: auto;
+        }
+        .contact-buttons {
+            flex-direction: row;
+        }
+    }
+    @media screen and (min-width: $desktop) {
+        .left-contact-container {
+            .crosses {
+                display: block;
+            }
+        }
+    }
+}
