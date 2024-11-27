@@ -8,7 +8,7 @@
  * @package aquinas
  */
 
-if ($args["headerImg"]) {
+if (isset($args["headerImg"])) {
     $headerImg = $args["headerImg"];
 } else {
     if (has_post_thumbnail() && !is_archive()) {
