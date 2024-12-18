@@ -4,7 +4,7 @@ Theme URI: http://underscores.me/
 Author: Sam Pohlman
 Author URI: http://underscores.me/
 Description: A boilerplate template to base new hybrids on
-Version: 1.0.7
+Version: 1.0.8
 Tested up to: 6.6.1
 Requires PHP: 5.6
 License: GNU General Public License v2 or later
@@ -2625,6 +2625,9 @@ main .entry-header.no-header-image {
 }
 .banner-container .banner-content-wrapper > * {
   position: relative;
+}
+.banner-container .banner-content-wrapper .banner-heading {
+  margin-top: 0;
 }
 .banner-container .banner-content-wrapper .banner-button {
   margin-top: 10px;
