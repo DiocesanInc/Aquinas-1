@@ -8,22 +8,35 @@
  * @package aquinas
  */
 
-
-$groups = get_terms(
+$terms = get_terms(
     array(
         'taxonomy'   => "ministry-group",
         'hide_empty' => false,
-        "orderby" => "date",
-        "order" => "DESC"
+        "orderby" => "title",
+        "order" => "DSC"
     )
 );
+
+$ministryGroups = [];
+
+foreach ($terms as $ministryGroup) {
+    $order = get_field("ministry_group_order", "ministry-group_$ministryGroup->term_id") ?? '';
+
+    if ($order !== "") {
+        $ministryGroups[$order] = $ministryGroup;
+    } else {
+        array_push($ministryGroups, $ministryGroup);
+    }
+}
+
+ksort($ministryGroups, SORT_NUMERIC);
 
 $contactFormId = get_field("ministry_contact_form_id", "options") ? get_field("ministry_contact_form_id", "options")["id"] : 1;
 
 ?>
 
 <div class="ministry-slider entry-content max-width">
-    <?php foreach ($groups as $group) :
+    <?php foreach ($ministryGroups as $group) :
         $args = array(
             "post_type" => "ministry",
             "tax_query" => array(
