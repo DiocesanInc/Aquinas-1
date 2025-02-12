@@ -9,7 +9,7 @@
  */
 
 if (isset($args["headerImg"])) {
-    $headerImg = $args["headerImg"];
+    $headerImg = $args["headerImg"] ?? '';
 } else {
     if (has_post_thumbnail() && !is_archive()) {
         $headerImg = get_the_post_thumbnail_url(null, "large");
